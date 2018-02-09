@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Salesforce emulator</title>
+    <script
+            src="http://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous"></script>
+</head>
+<body>
+<button onclick="doAuth()">ping</button>
+<script>
+    function doAuth() {
+        function success(response) {
+            console.log(response);
+        }
+        $.ajax({
+            type: "GET",
+            url: 'http://localhost:3000/ping',
+            data: {},
+            // statusCode: {
+            //     200: success
+            // },
+            // success
+        }).done(success);
+    }
+</script>
+</body>
+</html>
