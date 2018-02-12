@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+  oauth2-poc-mongo:
+    image: mongo:3.4.10
+    expose:
+      - "27017"
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./data/db:/data/db
+    command: "mongod --smallfiles" # use smallfiles option in order to decrease the inital size of data files and reduce journal size
+#networks:
+#  frontend:
+#  backend:
+#
+#volumes:
+#  frontend_dist:
+#  login_dist:
