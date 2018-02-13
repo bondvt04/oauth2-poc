@@ -31,12 +31,11 @@ passport.serializeUser(authSerializer);
 passport.deserializeUser(authDeserializer);
 
 module.exports = (app) => {
-    // ... continue with Express.js app initialization ...
-    app.use(require('connect-flash')()); // see the next section
+    app.use(require('connect-flash')());
     app.use(passport.initialize());
     app.post('/login', passport.authenticate('local', {
         successRedirect: '/home',
         failureRedirect: '/login',
         failureFlash: true
     }));
-}
+};

@@ -38,23 +38,25 @@ dbConnection
 
 module.exports = {
     // Crud
-    create: (options = {}) => {
+    create: (options = {
+        collection: throwIfMissing(),
+        data: {}
+    }) => {
         return dbConnection
             .then((client) => {
-                const collection = options.collection || 'users';
-                const data = options.data || {};
-                return client.collection(collection).insertOne(data);
+                return client.collection(options.collection).insertOne(options.data);
             })
             .catch(this.catch);
     },
     // cRud
-    find: (options = {}) => {
+    find: (options = {
+        collection: throwIfMissing(),
+        filter: {}
+    }) => {
         return dbConnection
             .then((client) => {
-                const collection = options.collection || 'users';
-                const filter = options.filter || {};
                 return new Promise((resolve, reject) => {
-                    client.collection(collection).find(filter).toArray(function(error, docs) {
+                    client.collection(options.collection).find(options.filter).toArray(function(error, docs) {
                         if (error) {
                             reject(error);
                             return;
@@ -65,16 +67,53 @@ module.exports = {
             })
             .catch(this.catch);
     },
-    // crUd
-    update: (options = {}) => {
+    // cRud
+    findOne: (options = {
+        collection: throwIfMissing(),
+        filter: {}
+    }) => {
         return dbConnection
             .then((client) => {
-                const collection = options.collection || 'users';
-                const filter = options.filter || {};
-                const data = options.data || {};
-
                 return new Promise((resolve, reject) => {
-                    client.collection(collection).update(filter, data, (error, result) => {
+                    client.collection(options.collection).find(options.filter).toArray(function(error, docs) {
+                        if (error) {
+                            reject(error);
+                            return;
+                        }
+
+                        if (docs && docs[0]) {
+                            resolve(docs[0]);
+                            return;
+                        }
+
+                        reject(new Error(`No documents for collection "${options.collection}" and filter "${options.filter}"`));
+                    });
+                });
+            })
+            .catch(this.catch);
+    },
+    // cRud
+    findById: (options = {
+        collection: throwIfMissing(),
+        id: throwIfMissing()
+    }) => {
+        return this.findById({
+            collection: options.collection,
+            filter: {
+                _id: options.id
+            }
+        })
+    },
+    // crUd
+    update: (options = {
+        collection: throwIfMissing(),
+        filter: {},
+        data: {}
+    }) => {
+        return dbConnection
+            .then((client) => {
+                return new Promise((resolve, reject) => {
+                    client.collection(options.collection).update(options.filter, options.data, (error, result) => {
                         if(error) {
                             reject(error);
                             return;
@@ -87,14 +126,14 @@ module.exports = {
             .catch(this.catch);
     },
     // cruD
-    delete: (options = {}) => {
+    delete: (options = {
+        collection: throwIfMissing(),
+        filter: {}
+    }) => {
         return dbConnection
             .then((client) => {
-                const collection = options.collection || 'users';
-                const filter = options.filter || {};
-
                 return new Promise((resolve, reject) => {
-                    client.collection(collection).deleteMany(filter, (error, result) => {
+                    client.collection(options.collection).deleteMany(options.filter, (error, result) => {
                         if(error) {
                             reject(error);
                             return;
@@ -110,4 +149,8 @@ module.exports = {
     catch: (error) => {
         console.log(`### ERROR ###`, error);
     }
+};
+
+function throwIfMissing() {
+    throw new Error('Missing parameter');
 }
