@@ -21,6 +21,13 @@ const Application = {
             collection: this.collection,
             id
         });
+    },
+
+    findOne(filter) {
+        return db.findOne({
+            collection: this.collection,
+            filter
+        });
     }
 };
 

@@ -1,3 +1,4 @@
+const oauth2orize = require('oauth2orize');
 const server = oauth2orize.createServer();
 const {
     Application,
