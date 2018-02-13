@@ -30,7 +30,9 @@ module.exports = (app) => {
                         done(new Error("There is no app with the client_id you supplied."), false);
                     }
             })
-            .catch(done);
+            .catch((error) => {
+                done(error)
+            });
     }), function(req, res) {
 
         const scopeMap = {
