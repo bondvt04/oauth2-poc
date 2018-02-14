@@ -1,6 +1,6 @@
 const MongoClient = require('mongodb').MongoClient;
 const dbConnection = (function initDB() {
-    var config = {
+    let config = {
         defaults: {
             host: 'localhost',
             port: 27017,
@@ -86,7 +86,7 @@ module.exports = {
                             return;
                         }
 
-                        reject(new Error(`No documents for collection "${options.collection}" and filter "${options.filter}"`));
+                        reject(new Error(`No documents for collection "${options.collection}" and filter "${JSON.stringify(options.filter)}"`));
                     });
                 });
             })
@@ -148,6 +148,12 @@ module.exports = {
 
     catch: (error) => {
         console.log(`### ERROR ###`, error);
+    },
+
+    //disconnect: dbConnection.close
+    disconnect: () => {
+        return dbConnection
+            .then(client => client.close())
     }
 };
 
