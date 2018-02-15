@@ -16,6 +16,13 @@ const fixtures = [
                 "do_stuff"
             ]
         }
+    },
+    {
+        collection: "users",
+        data: {
+            "email" : "asdf@asdf.com",
+            "password_hash" : "sha1$823ecb69$1$30235c5078029e5ba29a9d8d8143731d5c1fd454"
+        }
     }
 ];
 

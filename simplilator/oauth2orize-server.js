@@ -2,6 +2,7 @@ const url = require('url');
 const passport = require('passport');
 const oauth2orize = require('oauth2orize');
 const server = oauth2orize.createServer();
+const bodyParser = require('body-parser');
 const {
     Application,
     GrantCode,
@@ -95,7 +96,9 @@ module.exports = (app) => {
             map: scopeMap
         });
     });
-    app.post('/auth/finish', function(req, res, next) {
+    //bodyParser.urlencoded({ extended: false })
+    //bodyParser.json()
+    app.post('/auth/finish', bodyParser.urlencoded({ extended: false }), function(req, res, next) {
         if (req.user) {
             next();
         } else {

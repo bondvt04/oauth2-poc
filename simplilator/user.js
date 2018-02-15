@@ -4,26 +4,24 @@ const db = require('./db.js');
 
 module.exports = {
     authenticate(email, password, callback) {
-        const password_hash = this.makeHashed(password);
         return db.find({
             collection: "users",
             filter: {
                 email,
-                password_hash
             }
-        }).then(users => {
-            return new Promise((resolve, reject) => {
-                if (users && users[0] && Hash.verify(password, user.password_hash)) {
-                    resolve(users[0]);
-                } else if(users && users[0]) {
-                    let error = new Error("Your email address or password is invalid. Please try again.");
-                    reject(error);
-                } else {
-                    let error = new Error("Something bad happened with MongoDB");
-                    reject(error);
+        })
+            .then(users => {
+                if (users && users[0] && Hash.verify(password, users[0].password_hash)) {
+                    return users[0];
                 }
+
+                return undefined;
+            })
+            .catch(error => {
+                let err = new Error(`Something bad happened with MongoDB: ${error.message}`);
+                console.log(err);
+                throw err;
             });
-        });
     },
 
     create(user = {}) {

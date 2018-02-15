@@ -30,12 +30,3 @@ passport.use(authStrategy);
 passport.serializeUser(authSerializer);
 passport.deserializeUser(authDeserializer);
 
-module.exports = (app) => {
-    app.use(require('connect-flash')());
-    app.use(passport.initialize());
-    app.post('/login', passport.authenticate('local', {
-        successRedirect: '/home',
-        failureRedirect: '/login',
-        failureFlash: true
-    }));
-};
