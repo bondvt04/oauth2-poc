@@ -1,4 +1,5 @@
 const MongoClient = require('mongodb').MongoClient;
+const ObjectId = require('mongodb').ObjectId;
 const dbConnection = (function initDB() {
     let config = {
         defaults: {
@@ -38,25 +39,25 @@ dbConnection
 
 module.exports = {
     // Crud
-    create: (options = {
-        collection: throwIfMissing(),
-        data: {}
-    }) => {
+    create({
+        collection = throwIfMissing(),
+        data = {}
+    }) {
         return dbConnection
             .then((client) => {
-                return client.collection(options.collection).insertOne(options.data);
+                return client.collection(collection).insertOne(data);
             })
             .catch(this.catch);
     },
     // cRud
-    find: (options = {
-        collection: throwIfMissing(),
-        filter: {}
-    }) => {
+    find({
+        collection = throwIfMissing(),
+        filter = {}
+    }) {
         return dbConnection
             .then((client) => {
                 return new Promise((resolve, reject) => {
-                    client.collection(options.collection).find(options.filter).toArray(function(error, docs) {
+                    client.collection(collection).find(filter).toArray(function(error, docs) {
                         if (error) {
                             reject(error);
                             return;
@@ -68,14 +69,14 @@ module.exports = {
             .catch(this.catch);
     },
     // cRud
-    findOne: (options = {
-        collection: throwIfMissing(),
-        filter: {}
-    }) => {
+    findOne({
+        collection = throwIfMissing(),
+        filter = {}
+    }) {
         return dbConnection
             .then((client) => {
                 return new Promise((resolve, reject) => {
-                    client.collection(options.collection).find(options.filter).toArray(function(error, docs) {
+                    client.collection(collection).find(filter).toArray(function(error, docs) {
                         if (error) {
                             reject(error);
                             return;
@@ -86,34 +87,33 @@ module.exports = {
                             return;
                         }
 
-                        reject(new Error(`No documents for collection "${options.collection}" and filter "${JSON.stringify(options.filter)}"`));
+                        reject(new Error(`No documents for collection "${collection}" and filter "${JSON.stringify(filter)}"`));
                     });
                 });
             })
             .catch(this.catch);
     },
     // cRud
-    findById: (options = {
-        collection: throwIfMissing(),
-        id: throwIfMissing()
-    }) => {
-        return this.findById({
-            collection: options.collection,
-            filter: {
-                _id: options.id
-            }
+    findById({
+        collection = throwIfMissing(),
+        id = throwIfMissing()
+    }) {
+        const _id = new ObjectId(id);
+        return this.findOne({
+            collection,
+            filter: { _id }
         })
     },
     // crUd
-    update: (options = {
-        collection: throwIfMissing(),
-        filter: {},
-        data: {}
-    }) => {
+    update({
+        collection = throwIfMissing(),
+        filter = {},
+        data = {}
+    }) {
         return dbConnection
             .then((client) => {
                 return new Promise((resolve, reject) => {
-                    client.collection(options.collection).update(options.filter, options.data, (error, result) => {
+                    client.collection(collection).update(filter, data, (error, result) => {
                         if(error) {
                             reject(error);
                             return;
@@ -126,14 +126,14 @@ module.exports = {
             .catch(this.catch);
     },
     // cruD
-    delete: (options = {
-        collection: throwIfMissing(),
-        filter: {}
-    }) => {
+    delete({
+        collection = throwIfMissing(),
+        filter = {}
+    }) {
         return dbConnection
             .then((client) => {
                 return new Promise((resolve, reject) => {
-                    client.collection(options.collection).deleteMany(options.filter, (error, result) => {
+                    client.collection(collection).deleteMany(filter, (error, result) => {
                         if(error) {
                             reject(error);
                             return;
@@ -146,12 +146,13 @@ module.exports = {
             .catch(this.catch);
     },
 
-    catch: (error) => {
+    catch(error) {
         console.log(`### ERROR ###`, error);
+        throw error;
     },
 
     //disconnect: dbConnection.close
-    disconnect: () => {
+    disconnect() {
         return dbConnection
             .then(client => client.close())
     }

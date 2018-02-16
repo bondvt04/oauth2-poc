@@ -4,12 +4,13 @@ const db = require('./db.js');
 const Application = {
     collection: "applications",
 
-    create(data = {
-        title: throwIfMissing(),// string
-        oauth_id: throwIfMissing(),// number
-        oauth_secret: uid(42),// string
-        domains: []// array of strings
-    }) {
+    create(data) {
+        const data = {
+            title = throwIfMissing(),// string
+            oauth_id = throwIfMissing(),// number
+            oauth_secret = uid(42),// string
+            domains = []// array of strings
+        } = data;
         return db.create({
             collection: this.collection,
             data
@@ -34,19 +35,22 @@ const Application = {
 const GrantCode = {
     collection: "grant_codes",
 
-    create(data = {
-        code: uid(24),// string
-        user: throwIfMissing(),// ObjectId=user._id
-        application: throwIfMissing(),// ObjectId=application._id
-        scope: [],// array of strings
-        active: true// boolean
-    }) {
+    create(data) {
+        data.code = data.code || uid(24);
+        data.user = data.user !== undefined ? data.user : throwIfMissing();
+        data.application = data.application !== undefined ? data.application : throwIfMissing();
+        data.scope = data.scope || [];
+        data.active = data.active !== undefined ? data.active : true;
+
         return new Promise((resolve, reject) => {
             db.create({
                 collection: this.collection,
                 data
             })
-                .then(() => resolve(data.code))
+                .then((newGrantCode) => {
+                    console.log(data, newGrantCode);
+                    resolve(data.code);
+                })
                 .catch(reject)
         });
     },
@@ -61,19 +65,20 @@ const GrantCode = {
 const AccessToken = {
     collection: "access_tokens",
 
-    create(data = {
-        token: uid(124),// string
-        user: throwIfMissing(),// ObjectId=user._id
-        application: throwIfMissing(),// ObjectId=application._id
-        grant: throwIfMissing(),// ObjectId=grant_code._id
-        scope: [],// array of strings
-        expires: (() => {
-            const today = new Date();
-            const length = 60; // Length (in minutes) of our access token
-            return new Date(today.getTime() + length * 60000);
-        })(),
-        active: true// get: function(value) {if(expires < new Date() || !value){false}else{value}}
-    }) {
+    create(data) {
+        data = {
+            token = uid(124),// string
+            user = throwIfMissing(),// ObjectId=user._id
+            application = throwIfMissing(),// ObjectId=application._id
+            grant = throwIfMissing(),// ObjectId=grant_code._id
+            scope = [],// array of strings
+            expires = (() => {
+                const today = new Date();
+                const length = 5; // Length (in minutes) of our access token
+                return new Date(today.getTime() + length * 60000);
+            })(),
+            active = true// get: function(value) {if(expires < new Date() || !value){false}else{value}}
+        } = data;
         return db.create({
             collection: this.collection,
             data

@@ -3,6 +3,7 @@ const passport = require('passport');
 const oauth2orize = require('oauth2orize');
 const server = oauth2orize.createServer();
 const bodyParser = require('body-parser');
+const PassportOAuthBearer = require('passport-http-bearer');
 const {
     Application,
     GrantCode,
@@ -13,12 +14,16 @@ server.grant(oauth2orize.grant.code({
     scopeSeparator: [ ' ', ',' ]
 }, function(application, redirectURI, user, ares, done) {
     GrantCode.create({
-        application: application,
-        user: user,
+        application: application._id,
+        user: user ? user._id : null,
         scope: ares.scope
     })
-        .then(grant_code => done(null, grant_code))
-        .catch(done);
+        .then(grant_code => {
+            done(null, grant_code);
+        })
+        .catch(error => {
+            done(error);
+        });
 }));
 
 server.exchange(oauth2orize.exchange.code({
@@ -31,7 +36,7 @@ server.exchange(oauth2orize.exchange.code({
                     application: grant.application,
                     user: grant.user,
                     grant: grant,
-                    scope: grant.scope
+                    scope: grant    .scope
                 });
                 token.save(function(error) {
                     done(error, error ? null : token.token, null, error ? null : { token_type: 'standard' });
@@ -40,7 +45,9 @@ server.exchange(oauth2orize.exchange.code({
                 done(new Error("Something goes wrong with server.exchange"), false);
             }
         })
-        .catch(done);// @TODO consider to decide - maybe better to do "done(error, false)"
+        .catch((error) => {
+            done(error);
+        });// @TODO consider to decide - maybe better to do "done(error, false)"
 }));
 
 server.serializeClient(function(application, done) {
@@ -49,8 +56,12 @@ server.serializeClient(function(application, done) {
 
 server.deserializeClient(function(id, done) {
     Application.findById(id)
-        .then(application => done(null, application))
-        .catch(done)
+        .then(app => {
+            done(null, app)
+        })
+        .catch(error => {
+            done(error);
+        })
 });
 
 module.exports = (app) => {
@@ -113,6 +124,9 @@ module.exports = (app) => {
                 }
             })(req, res, next);
         }
+    // }, function(req, res, asdf) {
+    //     console.log(req, res, asdf);
+    // });
     }, server.decision(function(req, done) {
         done(null, { scope: req.oauth2.req.scope });
     }));
@@ -132,17 +146,30 @@ module.exports = (app) => {
                 }
             })
             .catch(next)
+    }, server.token(), server.errorHandler());
 
-        Application.findOne({ oauth_id: appID, oauth_secret: appSecret }, function(error, application) {
-            if (application) {
-                req.app = application;
-                next();
-            } else if (!error) {
-                error = new Error("There was no application with the Application ID and Secret you provided.");
-                next(error);
+
+
+    const accessTokenStrategy = new PassportOAuthBearer(function(token, done) {
+        AccessToken.findOne({ token: token }).populate('user').populate('grant').exec(function(error, token) {
+            if (token && token.active && token.grant.active && token.user) {
+                done(null, token.user, { scope: token.scope });
+            } else if (!error) {p
+                done(null, false);
             } else {
-                next(error);
+                done(error);
             }
         });
-    }, server.token(), server.errorHandler());
+    });
+
+    passport.use(accessTokenStrategy);
+
+    app.get('/api/me',
+        passport.authenticate('bearer', { session: false }),
+        function(req, res, next) {
+            // ... Here we can do all sorts of cool things ...
+
+            res.json(req.user);
+        }
+    );
 };

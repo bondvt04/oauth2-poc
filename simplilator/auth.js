@@ -22,8 +22,12 @@ const authSerializer = function(user, done) {
 
 const authDeserializer = function(id, done) {
     User.findById(id)
-        .then(user => done(null, user))
-        .catch(error => done(error));
+        .then(user => {
+            done(null, user)
+        })
+        .catch(error => {
+            done(error);
+        });
 };
 
 passport.use(authStrategy);
