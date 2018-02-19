@@ -5,8 +5,8 @@ const fixtures = [
         collection: "applications",
         data: {
             "title" : "salesforce-plugin",
-            "oauth_id" : "OAUTH_ID",
-            "oauth_secret" : "-",
+            "oauth_id" : "salesforce_plugin___oauth_id_123",
+            "oauth_secret" : "salesforce_plugin___oauth_secret_123",
             "domains" : [
                 "google.com",
                 "localhost:3001"

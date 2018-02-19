@@ -66,19 +66,18 @@ const AccessToken = {
     collection: "access_tokens",
 
     create(data) {
-        data = {
-            token = uid(124),// string
-            user = throwIfMissing(),// ObjectId=user._id
-            application = throwIfMissing(),// ObjectId=application._id
-            grant = throwIfMissing(),// ObjectId=grant_code._id
-            scope = [],// array of strings
-            expires = (() => {
-                const today = new Date();
-                const length = 5; // Length (in minutes) of our access token
-                return new Date(today.getTime() + length * 60000);
-            })(),
-            active = true// get: function(value) {if(expires < new Date() || !value){false}else{value}}
-        } = data;
+        data.token = data.token || uid(124);
+        data.user = data.user !== undefined ? data.user : throwIfMissing();
+        data.application = data.application !== undefined ? data.application : throwIfMissing();
+        data.grant = data.grant !== undefined ? data.grant : throwIfMissing();
+        data.scope = data.scope || [];
+        data.expires = (() => {
+            const today = new Date();
+            const length = 5; // Length (in minutes) of our access token
+            return new Date(today.getTime() + length * 60000);
+        })();
+        data.active = data.active !== undefined ? data.active : true;
+
         return db.create({
             collection: this.collection,
             data

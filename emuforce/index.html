@@ -15,7 +15,7 @@
 <script>
     function doAuth() {
         const redirect_uri = 'http://localhost:3001/finish_auth';
-        const client_id = 'OAUTH_ID';
+        const client_id = 'salesforce_plugin___oauth_id_123';
         const response_type = 'code';
         const scope = 'edit_account,do_things';
         window.location.replace(`http://localhost:3000/auth/start?client_id=${client_id}&response_type=${response_type}&scope=${scope}&redirect_uri=${redirect_uri}`);

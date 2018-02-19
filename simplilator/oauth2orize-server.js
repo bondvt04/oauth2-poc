@@ -31,16 +31,21 @@ server.exchange(oauth2orize.exchange.code({
 }, function(application, code, redirectURI, done) {
     GrantCode.findOne({ code })
         .then(grant => {
-            if (grant && grant.active && grant.application == application.id) {
-                const token = new AccessToken({
+            if (grant && grant.active && grant.application.toString() == application._id.toString()) {
+
+                AccessToken.create({
                     application: grant.application,
                     user: grant.user,
-                    grant: grant,
+                    grant: grant._id,
                     scope: grant    .scope
-                });
-                token.save(function(error) {
-                    done(error, error ? null : token.token, null, error ? null : { token_type: 'standard' });
-                });
+                })
+                    .then(result => {
+                        const token = result.ops[0];
+                        done(undefined, token.token, null, { token_type: 'standard' });
+                    })
+                    .catch(error => {
+                        done(error, null, null, null);
+                    });
             } else {
                 done(new Error("Something goes wrong with server.exchange"), false);
             }
@@ -107,8 +112,6 @@ module.exports = (app) => {
             map: scopeMap
         });
     });
-    //bodyParser.urlencoded({ extended: false })
-    //bodyParser.json()
     app.post('/auth/finish', bodyParser.urlencoded({ extended: false }), function(req, res, next) {
         if (req.user) {
             next();
@@ -131,7 +134,7 @@ module.exports = (app) => {
         done(null, { scope: req.oauth2.req.scope });
     }));
 
-    app.post('/auth/exchange', function(req, res, next){
+    app.post('/auth/exchange', bodyParser.json(), function(req, res, next){
         const appID = req.body['client_id'];
         const appSecret = req.body['client_secret'];
 
