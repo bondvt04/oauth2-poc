@@ -167,12 +167,11 @@ module.exports = (app) => {
 
     passport.use(accessTokenStrategy);
 
-    app.get('/api/me',
+    app.post('/api/secured_resource',
         passport.authenticate('bearer', { session: false }),
         function(req, res, next) {
-            // ... Here we can do all sorts of cool things ...
-
-            res.json(req.user);
+            //res.json(req.user);
+            res.json('hello, world!');
         }
     );
 };

@@ -12,6 +12,7 @@
 <button onclick="pingSimplilator()">ping simplilator</button>
 <button onclick="pingEmuforce()">ping emuforce</button>
 <button onclick="doAuth()">do auth</button>
+<button onclick="doSecuredJob()">do secured job</button>
 <script>
     function doAuth() {
         const redirect_uri = 'http://localhost:3001/finish_auth';
@@ -19,6 +20,18 @@
         const response_type = 'code';
         const scope = 'edit_account,do_things';
         window.location.replace(`http://localhost:3000/auth/start?client_id=${client_id}&response_type=${response_type}&scope=${scope}&redirect_uri=${redirect_uri}`);
+    }
+
+    function doSecuredJob() {
+        $.ajax({
+            type: "GET",
+            url: 'http://localhost:3001/try_to_get_secured_resource',
+            data: {},
+        }).done(response => {
+            console.log(response);
+        }).fail(response => {
+            console.error(response);
+        });
     }
 
     function pingSimplilator() {
@@ -43,7 +56,7 @@
             data: {},
         }).done(response => {
             console.log(response);
-        })
+        });
     }
 
     // http://localhost:3000/auth/start?client_id=OAUTH_ID&response_type=code&scope=edit_account,do_things&redirect_uri=http://google.com
