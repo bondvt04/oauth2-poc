@@ -9,9 +9,19 @@
             crossorigin="anonymous"></script>
 </head>
 <body>
-<button onclick="doAuth()">ping</button>
+<button onclick="pingSimplilator()">ping simplilator</button>
+<button onclick="pingEmuforce()">ping emuforce</button>
+<button onclick="doAuth()">do auth</button>
 <script>
     function doAuth() {
+        const redirect_uri = 'http://localhost:3001/finish_auth';
+        const client_id = 'OAUTH_ID';
+        const response_type = 'code';
+        const scope = 'edit_account,do_things';
+        window.location.replace(`http://localhost:3000/auth/start?client_id=${client_id}&response_type=${response_type}&scope=${scope}&redirect_uri=${redirect_uri}`);
+    }
+
+    function pingSimplilator() {
         function success(response) {
             console.log(response);
         }
@@ -26,9 +36,18 @@
         }).done(success);
     }
 
+    function pingEmuforce() {
+        $.ajax({
+            type: "GET",
+            url: 'http://localhost:3001/ping',
+            data: {},
+        }).done(response => {
+            console.log(response);
+        })
+    }
 
-    // http://localhost:3000/auth/start?client_id=OAUTH_ID&response_type=code&scope=edit_account,do_things&redirect_uri=REDIRECT_URI
-    // http://localhost:3000/auth/start?client_id=10&response_type=code&scope=edit_account,do_things&redirect_uri=http://google.com
+    // http://localhost:3000/auth/start?client_id=OAUTH_ID&response_type=code&scope=edit_account,do_things&redirect_uri=http://google.com
+    // http://localhost:3000/auth/start?client_id=OAUTH_ID&response_type=code&scope=edit_account,do_things&redirect_uri=http://localhost:3001
 </script>
 </body>
 </html>

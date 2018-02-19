@@ -8,7 +8,8 @@ const fixtures = [
             "oauth_id" : "OAUTH_ID",
             "oauth_secret" : "-",
             "domains" : [
-                "google.com"
+                "google.com",
+                "localhost:3001"
             ],
             "scopes111" : [
                 "edit_account",
