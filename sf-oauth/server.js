@@ -25,10 +25,11 @@ const useOauth2orizeServer = require('./oauth2orize-server.js');
 // }));
 
 app.use(session({
-    secret: 'keyboard cat',
+    secret: 'simplifield-oauth-server-session-secret',
     resave: false,
     saveUninitialized: true
-}))
+}));
+
 
 app.use(connectFlash());
 app.use(passport.initialize());
@@ -46,4 +47,4 @@ app.post('/login', passport.authenticate('local', {
 }));
 
 app.listen(3000);
-console.log('Listen http://localhost:3000');
+console.log('Listen http://simplifield-oauth.local:3000');

@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node ./simplilator/server.js",
-    "start2": "node ./emuforce/server.js",
-    "fix": "node ./simplilator/fixtures.js",
+    "start": "node ./sf-oauth/server.js",
+    "start2": "node ./sf-plugin/server.js",
+    "fix": "node ./sf-oauth/fixtures.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

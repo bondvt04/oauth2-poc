@@ -9,23 +9,50 @@
             crossorigin="anonymous"></script>
 </head>
 <body>
-<button onclick="pingSimplilator()">ping simplilator</button>
-<button onclick="pingEmuforce()">ping emuforce</button>
+<button onclick="pingSimplilator()">ping sf-oauth</button>
+<button onclick="pingEmuforce()">ping sf-plugin</button>
 <button onclick="doAuth()">do auth</button>
 <button onclick="doSecuredJob()">do secured job</button>
+<button onclick="testSession1()">test session 1</button>
+<button onclick="testSession2()">test session 2</button>
+
 <script>
+    function testSession1() {
+        $.ajax({
+            type: "GET",
+            url: 'http://salesforce-plugin.local:3001/test-session1',
+            data: {},
+        }).done(response => {
+            console.log(response);
+        }).fail(response => {
+            console.error(response);
+        });
+    }
+
+    function testSession2() {
+        $.ajax({
+            type: "GET",
+            url: 'http://salesforce-plugin.local:3001/test-session2',
+            data: {},
+        }).done(response => {
+            console.log(response);
+        }).fail(response => {
+            console.error(response);
+        });
+    }
+
     function doAuth() {
-        const redirect_uri = 'http://localhost:3001/finish_auth';
+        const redirect_uri = 'http://salesforce-plugin.local:3001/finish_auth';
         const client_id = 'salesforce_plugin___oauth_id_123';
         const response_type = 'code';
         const scope = 'edit_account,do_things';
-        window.location.replace(`http://localhost:3000/auth/start?client_id=${client_id}&response_type=${response_type}&scope=${scope}&redirect_uri=${redirect_uri}`);
+        window.location.replace(`http://simplifield-oauth.local:3000/auth/start?client_id=${client_id}&response_type=${response_type}&scope=${scope}&redirect_uri=${redirect_uri}`);
     }
 
     function doSecuredJob() {
         $.ajax({
             type: "GET",
-            url: 'http://localhost:3001/try_to_get_secured_resource',
+            url: 'http://salesforce-plugin.local:3001/try_to_get_secured_resource',
             data: {},
         }).done(response => {
             console.log(response);
@@ -40,7 +67,7 @@
         }
         $.ajax({
             type: "GET",
-            url: 'http://localhost:3000/ping',
+            url: 'http://simplifield-oauth.local:3000/ping',
             data: {},
             // statusCode: {
             //     200: success
@@ -52,15 +79,12 @@
     function pingEmuforce() {
         $.ajax({
             type: "GET",
-            url: 'http://localhost:3001/ping',
+            url: 'http://salesforce-plugin.local:3001/ping',
             data: {},
         }).done(response => {
             console.log(response);
         });
     }
-
-    // http://localhost:3000/auth/start?client_id=OAUTH_ID&response_type=code&scope=edit_account,do_things&redirect_uri=http://google.com
-    // http://localhost:3000/auth/start?client_id=OAUTH_ID&response_type=code&scope=edit_account,do_things&redirect_uri=http://localhost:3001
 </script>
 </body>
 </html>

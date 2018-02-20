@@ -37,7 +37,7 @@ server.exchange(oauth2orize.exchange.code({
                     application: grant.application,
                     user: grant.user,
                     grant: grant._id,
-                    scope: grant    .scope
+                    scope: grant.scope
                 })
                     .then(result => {
                         const token = result.ops[0];
@@ -157,7 +157,7 @@ module.exports = (app) => {
         AccessToken.findOne({ token: token }).populate('user').populate('grant').exec(function(error, token) {
             if (token && token.active && token.grant.active && token.user) {
                 done(null, token.user, { scope: token.scope });
-            } else if (!error) {p
+            } else if (!error) {
                 done(null, false);
             } else {
                 done(error);

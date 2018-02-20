@@ -9,7 +9,7 @@ const fixtures = [
             "oauth_secret" : "salesforce_plugin___oauth_secret_123",
             "domains" : [
                 "google.com",
-                "localhost:3001"
+                "salesforce-plugin.local:3001"
             ],
             "scopes111" : [
                 "edit_account",
