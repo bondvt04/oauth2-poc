@@ -19,7 +19,7 @@ module.exports = {
             })
             .catch(error => {
                 let err = new Error(`Something bad happened with MongoDB: ${error.message}`);
-                console.log(err);
+                console.error(err);
                 throw err;
             });
     },

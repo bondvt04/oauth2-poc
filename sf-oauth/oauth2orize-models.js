@@ -48,7 +48,6 @@ const GrantCode = {
                 data
             })
                 .then((newGrantCode) => {
-                    console.log(data, newGrantCode);
                     resolve(data.code);
                 })
                 .catch(reject)

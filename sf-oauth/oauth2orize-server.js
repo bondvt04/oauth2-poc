@@ -131,9 +131,6 @@ module.exports = (app) => {
                 }
             })(req, res, next);
         }
-    // }, function(req, res, asdf) {
-    //     console.log(req, res, asdf);
-    // });
     }, server.decision(function(req, done) {
         done(null, { scope: req.oauth2.req.scope });
     }));
@@ -188,7 +185,6 @@ module.exports = (app) => {
     app.post('/api/secured_resource',
         passport.authenticate('bearer', { session: false }),
         function(req, res, next) {
-            //res.json(req.user);
             res.json('hello, world!');
         }
     );

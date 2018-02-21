@@ -28,11 +28,12 @@ app.get('/try_to_get_secured_resource',function(req, res){
         }
     };
 
+    // console.log('***', (new Date).getTime());
     request(options, function (error, response, body) {
         if (error) {
             res.status(401);
             res.send(error);
-            return console.log(error);
+            return console.error(error);
         }
         res.send(body);
     });
@@ -56,12 +57,12 @@ app.get('/finish_auth',function(req, res){
         }
     };
 
+    // Exchange auth code (grant) for token
     request(options, function (error, response, body) {
         if (error) {
-            return console.log(error);
+            return console.error(error);
         }
         req.session.access_token = body.access_token;
-        console.log(req.session.access_token);
         res.sendFile(__dirname + '/finish_auth.html');
     });
 });

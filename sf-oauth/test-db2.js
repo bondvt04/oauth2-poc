@@ -10,9 +10,9 @@ Promise.resolve()
             id: "5a84375b7ef043dd8e89a777"
         })
             .then(app => {
-                console.log(`** app`, app);
+
             })
             .catch(err => {
-                console.log(`## err`, JSON.stringify(err));
+                console.error(`## err`, JSON.stringify(err));
             });
     });
