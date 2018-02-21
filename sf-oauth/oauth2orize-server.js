@@ -9,6 +9,7 @@ const {
     GrantCode,
     AccessToken
 } = require('./oauth2orize-models.js');
+const User = require('./user.js');
 
 server.grant(oauth2orize.grant.code({
     scopeSeparator: [ ' ', ',' ]
@@ -120,6 +121,9 @@ module.exports = (app) => {
                 session: false
             }, function(error, user, info) {
                 if (user) {
+                    req.login(user, function(err) {
+                        console.error(err);
+                    });
                     next();
                 } else if (!error) {
                     req.flash('error', 'Your email or password was incorrect. Try again.');
@@ -152,17 +156,28 @@ module.exports = (app) => {
     }, server.token(), server.errorHandler());
 
 
-
+    // @TODO rewrite it with foreign keys
     const accessTokenStrategy = new PassportOAuthBearer(function(token, done) {
-        AccessToken.findOne({ token: token }).populate('user').populate('grant').exec(function(error, token) {
-            if (token && token.active && token.grant.active && token.user) {
-                done(null, token.user, { scope: token.scope });
-            } else if (!error) {
-                done(null, false);
-            } else {
-                done(error);
-            }
-        });
+        function handleError(error) {
+            console.error(error);
+        }
+
+        AccessToken.findOne({ token: token })
+            .then(at => {
+                return Promise.all([]
+                    .concat(GrantCode.findById(token.grant))
+                    .concat(User.findById(token.user))
+                ).then(results => {
+                    if (token && token.active && token.grant.active && token.user) {
+                        done(null, token.user, { scope: token.scope });
+                    } else if (!error) {
+                        done(null, false);
+                    } else {
+                        done(error);
+                    }
+                });
+            })
+            .catch(handleError);
     });
 
     passport.use(accessTokenStrategy);

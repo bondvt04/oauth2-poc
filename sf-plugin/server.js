@@ -22,8 +22,14 @@ app.get('/try_to_get_secured_resource',function(req, res){
         method: 'POST',
         json: {
             access_token
+        },
+        auth: {
+            'bearer': access_token
         }
     };
+
+
+    // Authorization: Bearer 123456789
 
     request(options, function (error, response, body) {
         if (error) {

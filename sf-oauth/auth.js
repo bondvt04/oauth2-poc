@@ -17,7 +17,7 @@ const authStrategy = new PassportLocalStrategy({
 });
 
 const authSerializer = function(user, done) {
-    done(null, user.id);
+    done(null, user._id);
 };
 
 const authDeserializer = function(id, done) {

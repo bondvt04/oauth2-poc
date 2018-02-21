@@ -60,6 +60,13 @@ const GrantCode = {
             collection: this.collection,
             filter
         });
+    },
+
+    findById(id) {
+        return db.findById({
+            collection: this.collection,
+            id
+        });
     }
 };
 const AccessToken = {
@@ -81,6 +88,20 @@ const AccessToken = {
         return db.create({
             collection: this.collection,
             data
+        });
+    },
+
+    findOne(filter) {
+        return db.findOne({
+            collection: this.collection,
+            filter
+        });
+    },
+
+    findById(id) {
+        return db.findById({
+            collection: this.collection,
+            id
         });
     }
 };
