@@ -28,14 +28,13 @@ app.get('/try_to_get_secured_resource',function(req, res){
         }
     };
 
-
-    // Authorization: Bearer 123456789
-
     request(options, function (error, response, body) {
         if (error) {
+            res.status(401);
+            res.send(error);
             return console.log(error);
         }
-        console.log(body);
+        res.send(body);
     });
 });
 

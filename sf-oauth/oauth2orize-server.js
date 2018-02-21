@@ -160,22 +160,25 @@ module.exports = (app) => {
     const accessTokenStrategy = new PassportOAuthBearer(function(token, done) {
         function handleError(error) {
             console.error(error);
+            done(error);
         }
 
         AccessToken.findOne({ token: token })
             .then(at => {
                 return Promise.all([]
-                    .concat(GrantCode.findById(token.grant))
-                    .concat(User.findById(token.user))
-                ).then(results => {
-                    if (token && token.active && token.grant.active && token.user) {
-                        done(null, token.user, { scope: token.scope });
-                    } else if (!error) {
-                        done(null, false);
-                    } else {
-                        done(error);
-                    }
-                });
+                    .concat(GrantCode.findById(at.grant))
+                    .concat(User.findById(at.user))
+                )
+                    .then(results => {
+                        const grant_code = results[0];
+                        const user = results[1];
+                        if (at && at.active && grant_code.active && user) {
+                            done(null, user, { scope: at.scope });
+                        } else if (!error) {
+                            done(null, false);
+                        }
+                    })
+                    .catch(handleError);
             })
             .catch(handleError);
     });
